@@ -53,6 +53,13 @@ def get_mood_stories(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    from datetime import datetime, timedelta
+
+    # ✅ 12시간 초과된 무드 자동 삭제
+    twelve_hours_ago = datetime.utcnow() - timedelta(hours=12)
+    db.query(Mood).filter(Mood.created_at < twelve_hours_ago).delete()
+    db.commit()
+
     # 내가 팔로우한 사람 목록
     followees = db.query(Follow).filter(Follow.follower_id == current_user.id).all()
     followee_ids = [f.following_id for f in followees]

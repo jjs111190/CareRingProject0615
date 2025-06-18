@@ -24,7 +24,7 @@ pip install redis
 pip install pydantic-settings
 python -m pip install --break-system-packages -r requirements.txt
 python -m pip install "passlib[bcrypt]" --break-system-packages
-uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+uvicorn app.main:app --host 0.0.0.0 --port 51235 &
 
 # React Native 실행
 cd ../frontend
@@ -39,10 +39,10 @@ docker stop carering-mysql
 pip freeze > requirements.txt
 
 #외부 서버 여는법
- npx localtunnel --port 8000 --subdomain mycarering
+ npx localtunnel --port 51235 --subdomain mycarering
 
 #웹서버열기
-npx localtunnel --port 8000 --subdomain carering
+npx localtunnel --port 51235 --subdomain carering
 
 
 #sql에 들어가기
@@ -102,3 +102,6 @@ go run main.go
 
 고서버랑 여는 법 
 ./run-go-tunnel.sh
+npm run dev
+웹사이트 웹서버로 여는법
+./start.sh

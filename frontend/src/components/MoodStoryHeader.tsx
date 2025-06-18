@@ -51,14 +51,14 @@ const MoodStoryHeader: React.FC = () => {
     }
   };
 
-  // 쿨다운 상태 계산 함수
+  // 쿨다운 상태 계산 함수 (UTC-safe)
   const calculateCooldown = (user: any) => {
     if (!user?.recentMood) return null;
-    
-    const created = new Date(user.recentMood.created_at);
-    const now = new Date();
-    const diff = created.getTime() + 12 * 60 * 60 * 1000 - now.getTime();
-    
+
+    const created = Date.parse(user.recentMood.created_at);
+    const now = Date.now();
+    const diff = created + 12 * 60 * 60 * 1000 - now;
+
     return diff > 0 ? diff : null;
   };
 
@@ -125,14 +125,19 @@ const MoodStoryHeader: React.FC = () => {
     ? stories.find(user => user.id === currentUserId)
     : null;
 
-  // 다른 사용자 필터링 (12시간 이내 기분 등록자)
+  // 다른 사용자 필터링 (12시간 이내 기분 등록자, UTC-safe)
+  const MS_PER_HOUR = 3600 * 1000;
+  const cutoff = 12 * MS_PER_HOUR;
+
   const others = stories.filter(user => {
     if (user.id === currentUserId) return false;
     if (!user.recentMood) return false;
-    
-    const created = new Date(user.recentMood.created_at);
-    const now = new Date();
-    return now.getTime() - created.getTime() < 12 * 60 * 60 * 1000;
+
+    const created = Date.parse(user.recentMood.created_at);
+    const now = Date.now();
+    const diff = now - created;
+
+    return diff < cutoff;
   });
 
   const renderMeBlock = () => {

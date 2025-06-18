@@ -16,7 +16,7 @@ services:
     build: .
     container_name: carering-backend
     ports:
-      - "8000:8000"
+      - "51235:51235"
     depends_on:
       - db
     volumes:

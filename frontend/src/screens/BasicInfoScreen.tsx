@@ -38,7 +38,7 @@ const BasicInfoScreen: React.FC = () => {
         const token = await AsyncStorage.getItem('token');
         if (!token) return;
 
-        const res = await axios.get('http://10.0.2.2:8000/basic-info/me', {
+        const res = await axios.get('http://10.0.2.2:51235/basic-info/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
 

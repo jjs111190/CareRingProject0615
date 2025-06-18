@@ -90,4 +90,5 @@ fastapi_app.include_router(widget_layout.router)
 fastapi_app.include_router(upload.router)
 
 # ✅ 최종 SocketIO 통합
+sio = socketio.AsyncServer(cors_allowed_origins="*", allow_credentials=True)
 app = ASGIApp(sio, other_asgi_app=fastapi_app)
