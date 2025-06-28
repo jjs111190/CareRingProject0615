@@ -173,7 +173,7 @@ const Messages: React.FC<MessagesProps> = ({ currentUser }) => {
                     <div className="relative">
                       {user.profile_image ? (
                         <img
-                          src={`http://localhost:51235${user.profile_image}`}
+                          src={`http://localhost:8000${user.profile_image}`}
                           alt={user.username}
                           className="w-12 h-12 rounded-full border-2 border-gray-200 object-cover"
                         />
@@ -232,7 +232,7 @@ const Messages: React.FC<MessagesProps> = ({ currentUser }) => {
                   <div className="relative">
                     {selectedChatUser.profile_image ? (
                       <img
-                        src={`http://localhost:51235${selectedChatUser.profile_image}`}
+                        src={`http://localhost:8000${selectedChatUser.profile_image}`}
                         alt={selectedChatUser.username}
                         className="w-12 h-12 rounded-full border-2 border-gray-200 object-cover"
                       />

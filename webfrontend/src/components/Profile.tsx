@@ -59,7 +59,7 @@ const Profile: React.FC<ProfileProps> = ({ user, basicInfo, isOwnProfile }) => {
   };
 
   const avatarUrl = basicInfo?.image_url 
-    ? `http://localhost:51235${basicInfo.image_url}`
+    ? `http://localhost:8000${basicInfo.image_url}`
     : null;
 
   const calculateAge = (birthDate: string) => {
@@ -288,7 +288,7 @@ const Profile: React.FC<ProfileProps> = ({ user, basicInfo, isOwnProfile }) => {
                     <div key={post.id} className="aspect-square bg-gray-100 rounded-lg overflow-hidden group cursor-pointer">
                       {post.image_url ? (
                         <img
-                          src={`http://localhost:51235${post.image_url}`}
+                          src={`http://localhost:8000${post.image_url}`}
                           alt={post.phrase}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />

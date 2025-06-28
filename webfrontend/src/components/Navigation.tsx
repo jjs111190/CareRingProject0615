@@ -1,30 +1,28 @@
 import React, { useState } from 'react';
-import { Home, Search, PlusSquare, MessageCircle, User, LogOut, Heart, Menu, X } from 'lucide-react';
+import { Home, MessageCircle, User, LogOut, Heart, Menu, X, Activity, Settings } from 'lucide-react';
 import type { User as UserType, BasicInfo } from '../types';
-import { API_BASE_URL } from '../services/api';
 
 interface NavigationProps {
   currentUser: UserType;
   basicInfo: BasicInfo | null;
   activeTab: string;
-  onTabChange: (tab: 'feed' | 'profile' | 'messages' | 'create') => void;
+  onTabChange: (tab: 'feed' | 'profile' | 'messages' | 'create' | 'wellness' | 'challenges' | 'customize') => void;
   onLogout: () => void;
 }
 
 const Navigation: React.FC<NavigationProps> = ({ currentUser, basicInfo, activeTab, onTabChange, onLogout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const navItems = [
     { id: 'feed', icon: Home, label: 'Home' },
-    { id: 'create', icon: PlusSquare, label: 'Create' },
+    { id: 'wellness', icon: Activity, label: 'Wellness' },
     { id: 'messages', icon: MessageCircle, label: 'Messages' },
     { id: 'profile', icon: User, label: 'Profile' },
   ];
 
-  const avatarUrl = basicInfo?.image_url
-    ? `${API_BASE_URL}${basicInfo.image_url}`
-    : `https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop`;
+  const avatarUrl = basicInfo?.image_url 
+    ? `http://localhost:51235${basicInfo.image_url}`
+    : null;
 
   return (
     <>
@@ -34,30 +32,12 @@ const Navigation: React.FC<NavigationProps> = ({ currentUser, basicInfo, activeT
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md">
-                <img
-                  src="/mylogo.png"
-                  alt="Logo"
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-10 h-10 bg-gradient-to-br from-[#4387E5] to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <Heart className="text-white font-bold text-lg w-6 h-6" fill="currentColor" />
               </div>
-              <span className="text-xl font-bold text-gray-900 hidden sm:block">
-                CareRing
+              <span className="text-xl font-bold bg-gradient-to-r from-[#4387E5] to-blue-600 bg-clip-text text-transparent hidden sm:block">
+                Carering
               </span>
-            </div>
-
-            {/* Search Bar */}
-            <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
-              <div className="relative w-full">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#4387E5] focus:border-transparent text-gray-900 placeholder-gray-500 transition-all"
-                />
-              </div>
             </div>
 
             {/* Desktop Navigation Items */}
@@ -66,30 +46,43 @@ const Navigation: React.FC<NavigationProps> = ({ currentUser, basicInfo, activeT
                 <button
                   key={item.id}
                   onClick={() => onTabChange(item.id as any)}
-                  className={`p-3 rounded-xl transition-all ${
+                  className={`p-3 rounded-xl transition-all relative group ${
                     activeTab === item.id 
-                      ? 'text-[#4387E5] bg-blue-50' 
+                      ? 'text-[#4387E5] bg-gradient-to-br from-blue-50 to-indigo-50' 
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
                   <item.icon className="w-6 h-6" />
+                  {activeTab === item.id && (
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#4387E5] rounded-full"></div>
+                  )}
                 </button>
               ))}
               
-              <div className="flex items-center space-x-2 ml-4">
-                <button className="p-3 rounded-xl transition-all hover:bg-gray-50 text-gray-600 hover:text-gray-900 relative">
-                  <Heart className="w-6 h-6" />
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
-                    3
-                  </span>
+              <div className="flex items-center space-x-3 ml-4">
+                <button
+                  onClick={() => onTabChange('customize')}
+                  className={`p-3 rounded-xl transition-all ${
+                    activeTab === 'customize'
+                      ? 'text-[#4387E5] bg-gradient-to-br from-blue-50 to-indigo-50'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <Settings className="w-6 h-6" />
                 </button>
                 
-                <div className="flex items-center space-x-3 ml-2">
-                  <img
-                    src={avatarUrl}
-                    alt={currentUser.nickname}
-                    className="w-10 h-10 rounded-full border-2 border-gray-200 hover:border-[#4387E5] transition-colors cursor-pointer object-cover"
-                  />
+                <div className="flex items-center space-x-3">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={currentUser.nickname}
+                      className="w-10 h-10 rounded-full border-2 border-blue-200 hover:border-[#4387E5] transition-colors cursor-pointer object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 bg-gradient-to-br from-[#4387E5] to-blue-600 rounded-full border-2 border-blue-200 hover:border-[#4387E5] transition-colors cursor-pointer flex items-center justify-center text-white font-semibold">
+                      {currentUser.nickname.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <button
                     onClick={onLogout}
                     className="p-3 rounded-xl transition-all hover:bg-gray-50 text-gray-600 hover:text-gray-900"
@@ -114,18 +107,6 @@ const Navigation: React.FC<NavigationProps> = ({ currentUser, basicInfo, activeT
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200">
             <div className="px-4 py-6 space-y-4">
-              {/* Mobile Search */}
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#4387E5] focus:border-transparent text-gray-900 placeholder-gray-500"
-                />
-              </div>
-
               {/* Mobile Navigation Items */}
               <div className="grid grid-cols-2 gap-3">
                 {navItems.map((item) => (
@@ -137,7 +118,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentUser, basicInfo, activeT
                     }}
                     className={`flex items-center space-x-3 p-4 rounded-xl transition-all ${
                       activeTab === item.id 
-                        ? 'bg-blue-50 text-[#4387E5]' 
+                        ? 'text-[#4387E5] bg-gradient-to-br from-blue-50 to-indigo-50' 
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`}
                   >
@@ -145,16 +126,37 @@ const Navigation: React.FC<NavigationProps> = ({ currentUser, basicInfo, activeT
                     <span className="font-medium">{item.label}</span>
                   </button>
                 ))}
+                
+                <button
+                  onClick={() => {
+                    onTabChange('customize');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center space-x-3 p-4 rounded-xl transition-all ${
+                    activeTab === 'customize'
+                      ? 'text-[#4387E5] bg-gradient-to-br from-blue-50 to-indigo-50'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  <Settings className="w-5 h-5" />
+                  <span className="font-medium">Customize</span>
+                </button>
               </div>
 
               {/* Mobile User Section */}
               <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                 <div className="flex items-center space-x-3">
-                  <img
-                    src={avatarUrl}
-                    alt={currentUser.nickname}
-                    className="w-12 h-12 rounded-full border-2 border-gray-200 object-cover"
-                  />
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={currentUser.nickname}
+                      className="w-12 h-12 rounded-full border-2 border-blue-200 object-cover"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#4387E5] to-blue-600 rounded-full border-2 border-blue-200 flex items-center justify-center text-white font-semibold">
+                      {currentUser.nickname.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <div>
                     <p className="font-medium text-gray-900">{basicInfo?.name || currentUser.nickname}</p>
                     <p className="text-sm text-gray-500">@{currentUser.nickname}</p>
@@ -181,18 +183,22 @@ const Navigation: React.FC<NavigationProps> = ({ currentUser, basicInfo, activeT
               onClick={() => onTabChange(item.id as any)}
               className={`p-3 rounded-xl transition-all ${
                 activeTab === item.id 
-                  ? 'text-[#4387E5] bg-blue-50' 
+                  ? 'text-[#4387E5] bg-gradient-to-br from-blue-50 to-indigo-50' 
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               <item.icon className="w-6 h-6" />
             </button>
           ))}
-          <button className="p-3 rounded-xl transition-all text-gray-600 hover:text-gray-900 relative">
-            <Heart className="w-6 h-6" />
-            <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
-              3
-            </span>
+          <button
+            onClick={() => onTabChange('customize')}
+            className={`p-3 rounded-xl transition-all ${
+              activeTab === 'customize'
+                ? 'text-[#4387E5] bg-gradient-to-br from-blue-50 to-indigo-50'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Settings className="w-6 h-6" />
           </button>
         </div>
       </div>

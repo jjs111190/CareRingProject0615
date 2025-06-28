@@ -1,5 +1,6 @@
 // src/api/client.ts (새 파일 생성)
 import axios from 'axios';
+import { fetchTunnelUrl } from '../../tunnelFetcher'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({ baseURL: 'https://mycarering.loca.lt' });

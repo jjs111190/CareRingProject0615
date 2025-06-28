@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
+import { fetchTunnelUrl } from '../../tunnelFetcher'
 interface LayoutSection {
   id: string;
   type: 'about' | 'health' | 'posts' | 'custom';

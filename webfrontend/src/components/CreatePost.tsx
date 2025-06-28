@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, MapPin, Hash, ArrowLeft, Upload } from 'lucide-react';
+import { Image, MapPin, Hash, ArrowLeft, Upload, Heart, Target, Utensils, Activity } from 'lucide-react';
 import { apiClient } from '../services/api';
 import type { User } from '../types';
 
@@ -16,6 +16,14 @@ const CreatePost: React.FC<CreatePostProps> = ({ currentUser, onPostCreated }) =
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
   const [error, setError] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+
+  const wellnessCategories = [
+    { id: 'fitness', name: 'Fitness', icon: Activity, color: '[#4387E5]', hashtag: '#fitness' },
+    { id: 'nutrition', name: 'Nutrition', icon: Utensils, color: 'orange', hashtag: '#nutrition' },
+    { id: 'mental', name: 'Mental Health', icon: Heart, color: 'purple', hashtag: '#mentalhealth' },
+    { id: 'goals', name: 'Goals', icon: Target, color: 'blue', hashtag: '#goals' },
+  ];
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -29,9 +37,18 @@ const CreatePost: React.FC<CreatePostProps> = ({ currentUser, onPostCreated }) =
     }
   };
 
+  const handleCategorySelect = (category: any) => {
+    setSelectedCategory(category.id);
+    const currentHashtags = hashtags.split(',').map(tag => tag.trim()).filter(tag => tag);
+    if (!currentHashtags.includes(category.hashtag.replace('#', ''))) {
+      const newHashtags = [...currentHashtags, category.hashtag.replace('#', '')];
+      setHashtags(newHashtags.join(', '));
+    }
+  };
+
   const handlePost = async () => {
     if (!phrase.trim()) {
-      setError('Please write something to share');
+      setError('Please share your wellness journey');
       return;
     }
     
@@ -69,25 +86,27 @@ const CreatePost: React.FC<CreatePostProps> = ({ currentUser, onPostCreated }) =
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
-          <h2 className="text-lg font-semibold text-gray-900">Create new post</h2>
+          <h2 className="text-lg font-semibold bg-gradient-to-r from-[#4387E5] to-blue-600 bg-clip-text text-transparent">
+            Share Your Wellness Journey
+          </h2>
           <button
             onClick={handlePost}
             disabled={!phrase.trim() || isPosting}
-            className="px-6 py-2 bg-[#4387E5] text-white rounded-xl font-medium hover:bg-[#3a75d1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-6 py-2 bg-gradient-to-r from-[#4387E5] to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            {isPosting ? 'Posting...' : 'Share'}
+            {isPosting ? 'Sharing...' : 'Share'}
           </button>
         </div>
 
         <div className="p-6">
           {/* User Info */}
           <div className="flex items-center space-x-3 mb-6">
-            <div className="w-12 h-12 bg-[#4387E5] rounded-full flex items-center justify-center text-white font-semibold">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#4387E5] to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
               {currentUser.nickname.charAt(0).toUpperCase()}
             </div>
             <div>
               <h3 className="font-semibold text-gray-900">{currentUser.nickname}</h3>
-              <p className="text-sm text-gray-500">{currentUser.email}</p>
+              <p className="text-sm text-gray-500">Sharing wellness inspiration</p>
             </div>
           </div>
 
@@ -97,6 +116,50 @@ const CreatePost: React.FC<CreatePostProps> = ({ currentUser, onPostCreated }) =
             </div>
           )}
 
+          {/* Wellness Categories */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Wellness Category (optional)
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {wellnessCategories.map((category) => {
+                const IconComponent = category.icon;
+                const isSelected = selectedCategory === category.id;
+                
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => handleCategorySelect(category)}
+                    className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-all ${
+                      isSelected
+                        ? category.id === 'fitness' 
+                          ? 'border-[#4387E5] bg-blue-50'
+                          : `border-${category.color}-500 bg-${category.color}-50`
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                    }`}
+                  >
+                    <IconComponent className={`w-5 h-5 ${
+                      isSelected 
+                        ? category.id === 'fitness'
+                          ? 'text-[#4387E5]'
+                          : `text-${category.color}-600`
+                        : 'text-gray-500'
+                    }`} />
+                    <span className={`font-medium ${
+                      isSelected 
+                        ? category.id === 'fitness'
+                          ? 'text-[#4387E5]'
+                          : `text-${category.color}-700`
+                        : 'text-gray-700'
+                    }`}>
+                      {category.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Image Upload */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -105,13 +168,13 @@ const CreatePost: React.FC<CreatePostProps> = ({ currentUser, onPostCreated }) =
             </label>
             
             {!imagePreview ? (
-              <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+              <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-colors">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                  <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
+                  <Upload className="w-10 h-10 mb-3 text-[#4387E5]" />
+                  <p className="mb-2 text-sm text-blue-700">
+                    <span className="font-semibold">Click to upload</span> your wellness photo
                   </p>
-                  <p className="text-xs text-gray-500">PNG, JPG or GIF (MAX. 10MB)</p>
+                  <p className="text-xs text-blue-600">PNG, JPG or GIF (MAX. 10MB)</p>
                 </div>
                 <input
                   type="file"
@@ -143,12 +206,12 @@ const CreatePost: React.FC<CreatePostProps> = ({ currentUser, onPostCreated }) =
           {/* Caption */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              What's on your mind?
+              Share your wellness story
             </label>
             <textarea
               value={phrase}
               onChange={(e) => setPhrase(e.target.value)}
-              placeholder="Share your thoughts..."
+              placeholder="What's your wellness win today? Share your journey, tips, or inspiration..."
               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#4387E5] focus:border-transparent resize-none"
               rows={4}
             />
@@ -163,15 +226,18 @@ const CreatePost: React.FC<CreatePostProps> = ({ currentUser, onPostCreated }) =
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Hash className="w-4 h-4 inline mr-1" />
-              Hashtags (optional)
+              Wellness Tags (optional)
             </label>
             <input
               type="text"
               value={hashtags}
               onChange={(e) => setHashtags(e.target.value)}
-              placeholder="travel, food, lifestyle (comma separated)"
+              placeholder="wellness, fitness, mindfulness, nutrition (comma separated)"
               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#4387E5] focus:border-transparent"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Help others discover your wellness content with relevant tags
+            </p>
           </div>
 
           {/* Location */}
@@ -184,9 +250,22 @@ const CreatePost: React.FC<CreatePostProps> = ({ currentUser, onPostCreated }) =
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Where was this taken?"
+              placeholder="Where did this wellness moment happen?"
               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#4387E5] focus:border-transparent"
             />
+          </div>
+
+          {/* Wellness Tip */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+            <div className="flex items-start space-x-3">
+              <Heart className="w-5 h-5 text-[#4387E5] mt-0.5" />
+              <div>
+                <h4 className="font-medium text-blue-700 mb-1">Wellness Tip</h4>
+                <p className="text-sm text-blue-600">
+                  Share authentic moments from your wellness journey. Your story might inspire someone else to start theirs!
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

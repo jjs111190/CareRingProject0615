@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share, Bookmark, MoreHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Share, Bookmark, MoreHorizontal, User } from 'lucide-react';
 import type { Post } from '../types';
 
 interface PostCardProps {
   post: Post;
   onLike: (postId: number) => void;
   onComment: (postId: number, comment: string) => void;
+  onUserClick?: (userId: number) => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment, onUserClick }) => {
   const [newComment, setNewComment] = useState('');
   const [showAllComments, setShowAllComments] = useState(false);
 
@@ -36,15 +37,21 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
       <div className="flex items-center justify-between p-6">
         <div className="flex items-center space-x-4">
           <div className="relative">
-            <div className="w-12 h-12 bg-[#4387E5] rounded-full flex items-center justify-center text-white font-semibold">
+            <button
+              onClick={() => onUserClick?.(post.user_id)}
+              className="w-12 h-12 bg-gradient-to-br from-[#4387E5] to-blue-600 rounded-full flex items-center justify-center text-white font-semibold hover:scale-105 transition-transform"
+            >
               {post.user_name.charAt(0).toUpperCase()}
-            </div>
+            </button>
             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 text-sm">
+            <button
+              onClick={() => onUserClick?.(post.user_id)}
+              className="font-semibold text-gray-900 text-sm hover:text-[#4387E5] transition-colors"
+            >
               {post.user_name}
-            </h3>
+            </button>
             <p className="text-gray-500 text-xs">{formatDate(post.created_at)}</p>
           </div>
         </div>
@@ -100,7 +107,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         {/* Caption */}
         <div className="mb-4">
           <p className="text-sm text-gray-900 leading-relaxed">
-            <span className="font-semibold mr-2">{post.user_name}</span>
+            <button
+              onClick={() => onUserClick?.(post.user_id)}
+              className="font-semibold mr-2 hover:text-[#4387E5] transition-colors"
+            >
+              {post.user_name}
+            </button>
             {post.phrase}
           </p>
           {post.hashtags && (
@@ -129,7 +141,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
               {(showAllComments ? post.comments : post.comments.slice(-1)).map((comment) => (
                 <div key={comment.id} className="flex items-start space-x-3">
                   <p className="text-sm text-gray-900 flex-1 leading-relaxed">
-                    <span className="font-semibold mr-2">{comment.user_name}</span>
+                    <button
+                      onClick={() => onUserClick?.(comment.user_id)}
+                      className="font-semibold mr-2 hover:text-[#4387E5] transition-colors"
+                    >
+                      {comment.user_name}
+                    </button>
                     {comment.content}
                   </p>
                   <button className="text-gray-400 hover:text-red-500 transition-colors">
@@ -146,7 +163,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           <div className="flex items-center space-x-3">
             <input
               type="text"
-              placeholder="Add a comment..."
+              placeholder="Add a wellness comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               className="flex-1 text-sm placeholder-gray-500 bg-transparent text-gray-900 focus:outline-none"
@@ -154,7 +171,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
             {newComment.trim() && (
               <button
                 type="submit"
-                className="text-[#4387E5] hover:text-[#3a75d1] font-semibold text-sm transition-colors"
+                className="text-[#4387E5] hover:text-blue-600 font-semibold text-sm transition-colors"
               >
                 Post
               </button>

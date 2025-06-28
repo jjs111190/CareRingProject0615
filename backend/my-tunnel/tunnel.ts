@@ -118,4 +118,4 @@ process.on('SIGINT', async () => {
 });
 
 // ✅ 전체 실행 시작
-startEverything();
+startEverything(); 

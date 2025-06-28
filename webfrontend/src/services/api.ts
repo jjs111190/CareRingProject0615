@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'http://localhost:51235';
+const API_BASE_URL = 'http://localhost:51235';
 
 // API 클라이언트 설정
 class ApiClient {
@@ -111,13 +111,6 @@ class ApiClient {
     });
   }
 
-  async resetPassword(email: string, newPassword: string) {
-    return this.request<any>('/users/reset-password', {
-      method: 'PUT',
-      body: JSON.stringify({ email, new_password: newPassword }),
-    });
-  }
-
   // Basic Info APIs
   async getBasicInfo() {
     return this.request<any>('/basic-info/me');
@@ -183,13 +176,21 @@ class ApiClient {
     });
   }
 
+  // Follow APIs
+  async getFollowData(userId?: number) {
+    const endpoint = userId ? `/follow/${userId}` : '/follow/me';
+    return this.request<any>(endpoint);
+  }
+
+  async toggleFollow(userId: number) {
+    return this.request<any>(`/follow/${userId}`, {
+      method: 'POST',
+    });
+  }
+
   // Message APIs
   async getMessageUsers() {
     return this.request<any[]>('/messages/users');
-  }
-
-  async getMutualFollowUsers() {
-    return this.request<any[]>('/messages/available-users/mutual');
   }
 
   async sendMessage(receiverId: number, content: string) {
@@ -209,18 +210,6 @@ class ApiClient {
     });
   }
 
-  async deleteChat(userId: number) {
-    return this.request<any>(`/messages/${userId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  async deleteMessage(messageId: number) {
-    return this.request<any>(`/messages/${messageId}`, {
-      method: 'DELETE',
-    });
-  }
-
   // Mood APIs
   async getMoodStories() {
     return this.request<any[]>('/mood/stories');
@@ -228,6 +217,58 @@ class ApiClient {
 
   async createMood(formData: FormData) {
     return this.requestForm<any>('/mood', formData);
+  }
+
+  // Profile Customization APIs
+  async saveProfileCustomization(customizationData: any) {
+    return this.request<any>('/profile/customization', {
+      method: 'POST',
+      body: JSON.stringify(customizationData),
+    });
+  }
+
+  async getProfileCustomization(userId?: number) {
+    const endpoint = userId ? `/profile/customization/${userId}` : '/profile/customization/me';
+    return this.request<any>(endpoint);
+  }
+
+  async updateWidgetLayout(widgets: any[]) {
+    return this.request<any>('/profile/widgets', {
+      method: 'PUT',
+      body: JSON.stringify(widgets),
+    });
+  }
+
+  async resetProfileCustomization() {
+    return this.request<any>('/profile/customization', {
+      method: 'DELETE',
+    });
+  }
+
+  async uploadBackgroundImage(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.requestForm<any>('/profile/background/upload', formData);
+  }
+
+  // Widget Layout APIs
+  async saveWidgetLayout(widgets: any[]) {
+    return this.request<any>('/widgets/layout', {
+      method: 'POST',
+      body: JSON.stringify({ widgets }),
+    });
+  }
+
+  async getWidgetLayout(userId?: number) {
+    const endpoint = userId ? `/widgets/layout/${userId}` : '/widgets/layout/me';
+    return this.request<any>(endpoint);
+  }
+
+  // Upload APIs
+  async uploadImage(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.requestForm<any>('/upload/image', formData);
   }
 }
 

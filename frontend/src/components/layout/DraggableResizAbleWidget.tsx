@@ -212,19 +212,26 @@ const DraggableResizAbleWidget: React.FC<DraggableResizAbleWidgetProps> = ({
                             {currentWidget.config?.posts && currentWidget.config.posts.length > 0 ? (
                                 currentWidget.config.posts.map((post: any) => (
                                     <TouchableOpacity
-                                        key={post.id} // post.id가 유니크하고 존재하는지 확인
+                                        key={post.id}
                                         style={widgetStyles.postItem}
                                         activeOpacity={0.8}
                                         onPress={() => onPostPress && onPostPress(post.id)}
                                     >
-                                        <Image
-                                            // post.image_url이 유효한 URL인지 확인
-                                            source={{ uri: post.image_url.startsWith('http') ? post.image_url : `https://mycarering.loca.lt${post.image_url}` }}
-                                            style={widgetStyles.postImage}
-                                        />
+                                        {post.image_url ? (
+                                            <Image
+                                                source={{
+                                                    uri: post.image_url.startsWith('http')
+                                                        ? post.image_url
+                                                        : `https://mycarering.loca.lt${post.image_url}`
+                                                }}
+                                                style={widgetStyles.postImage}
+                                            />
+                                        ) : (
+                                            <Text style={widgetStyles.noInfoText}>No Image</Text>
+                                        )}
                                         <View style={widgetStyles.postOverlay}>
                                             <Image source={require('../../../assets/heart.png')} style={widgetStyles.postIcon} />
-                                            <Text style={widgetStyles.postLikes}>{post.likes}</Text> {/* post.likes가 숫자인지 확인 */}
+                                            <Text style={widgetStyles.postLikes}>{post.likes}</Text>
                                         </View>
                                     </TouchableOpacity>
                                 ))

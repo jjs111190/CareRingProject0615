@@ -80,7 +80,37 @@ export interface MoodStory {
   };
 }
 
+export interface FollowData {
+  follower_count: number;
+  following_count: number;
+  is_following: boolean;
+}
+
 export interface AuthResponse {
   access_token: string;
   token_type: string;
+}
+
+export interface HealthMetric {
+  id: string;
+  name: string;
+  value: number;
+  unit: string;
+  icon: string;
+  color: string;
+  trend: 'up' | 'down' | 'stable';
+  change: number;
+}
+
+export interface WellnessChallenge {
+  id: string;
+  title: string;
+  description: string;
+  category: 'fitness' | 'nutrition' | 'mental' | 'sleep';
+  difficulty: 'easy' | 'medium' | 'hard';
+  duration: string;
+  participants: number;
+  reward: string;
+  icon: string;
+  color: string;
 }
